@@ -29,8 +29,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     BUNDLE_APP_CONFIG=/usr/local/bundle
 
 RUN apt-get -y update && \
-    apt-get clean && \
-    apt-get -y install \
+    apt-get -y install --no-install-recommends \
       apt-utils \
       at \
       autoconf \
@@ -39,28 +38,27 @@ RUN apt-get -y update && \
       ca-certificates>=20161130 \
       cron \
       curl \
+      dirmngr \
       dpkg-dev \
       gcc \
       git \
+      gnupg \
       initscripts \
       libbz2-dev \
       libffi-dev \
       libgdbm-dev \
       libgdbm3 \
       libglib2.0-dev \
-      libncurses-dev \
       libreadline-dev \
       libssl-dev \
       libsystemd0 \
       libudev1 \
-      libxml2-dev \
-      libxslt-dev \
-      libyaml-dev \
       libzmq3-dev=4.2.1-4 \
       logrotate \
       lsb-release \
       lsof \
       make \
+      netcat-openbsd \
       procps \
       rsyslog \
       ruby \
@@ -68,28 +66,26 @@ RUN apt-get -y update && \
       systemd \
       sysvinit-utils \
       udev \
-      unattended-upgrades \
       util-linux \
-      wget \
       xz-utils \
-      zlib1g-dev \
-  && \
-  apt-get clean && \
+      zlib1g-dev && \
+  \
   sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN \
+  \
+  curl -sL https://deb.nodesource.com/setup_10.x | bash && \
+  \
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
+  echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" | \
+    tee /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+  \
+  apt-get update && \
   mkdir -p /usr/local/etc /usr/src/ruby mkdir -p ${GEM_HOME} && \
   { \
     echo 'install: --no-document'; \
     echo 'update: --no-document'; \
   } >> /usr/local/etc/gemrc && \
   \
-  curl -L "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-${RUBY_VERSION}.tar.xz" \
-    -# \
-    -o /tmp/ruby.tar.xz && \
-    \
-    tar -C /usr/src/ruby --strip-components=1 -xJf /tmp/ruby.tar.xz && \
+  curl -sL "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-${RUBY_VERSION}.tar.xz" | tar -C /usr/src/ruby --strip-components=1 -xJf && \
   \
   cd /usr/src/ruby && \
   autoconf && \
@@ -101,19 +97,20 @@ RUN \
   make install && \
   cd / && \
   gem update --system ${RUBYGEMS_VERSION} && \
-  rm -r /root/.gem/ /usr/src/ruby
-
-RUN gem install \
+  rm -r /root/.gem/ /usr/src/ruby && \
+  \
+  gem install \
     \
-      turnip:2.1.1 \
-      turnip_formatter:0.5.0 \
+      bigdecimal:1.3.4 \
+      byebug:10.0.1 \
+      ffi-rzmq:2.0.4 \
+      mongo:2.6.2 \
       rspec_junit_formatter:0.3.0 \
       rspec-instafail:1.0.0 \
-      excon:0.61.0 \
-      byebug:10.0.1 \
-      ffi-rzmq:2.0.4
-
-RUN cd /lib/systemd/system/sysinit.target.wants/ && \
+      turnip:2.1.1 \
+      turnip_formatter:0.5.0 && \
+  \
+  cd /lib/systemd/system/sysinit.target.wants/ && \
     ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
     rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
     systemctl mask -- \
@@ -134,7 +131,9 @@ RUN cd /lib/systemd/system/sysinit.target.wants/ && \
     systemctl set-default multi-user.target || : && \
     \
     sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
-    echo "root:Docker!" | chpasswd
+    echo "root:Docker!" | chpasswd && \
+    \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/bbtest
 
