@@ -105,6 +105,7 @@ RUN apt-get -y update && \
       byebug:10.0.1 \
       ffi-rzmq:2.0.4 \
       mongo:2.6.2 \
+      rspec:3:8 \
       rspec_junit_formatter:0.3.0 \
       rspec-instafail:1.0.0 \
       turnip:2.1.1 \
