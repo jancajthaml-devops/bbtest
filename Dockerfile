@@ -96,7 +96,7 @@ RUN \
   ./configure \
     --build=x86_64-linux-gnu \
     --disable-install-doc \
-    --enable-shared \
+    --enable-shared && \
   make && \
   make install && \
   cd / && \
