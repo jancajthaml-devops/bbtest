@@ -28,14 +28,19 @@ ENV DEBIAN_FRONTEND=noninteractive \
     BUNDLE_SILENCE_ROOT_WARNING=1 \
     BUNDLE_APP_CONFIG=/usr/local/bundle
 
-RUN apt-get -y update && \
-    apt-get -y install --no-install-recommends \
+RUN apt-get update && \
+    \
+    apt-get install -y --no-install-recommends \
       apt-utils \
+      ca-certificates>=20161130 \
+      && \
+    \
+    apt-get -y install --no-install-recommends \
       at \
       autoconf \
       bison \
+      tar \
       bzip2 \
-      ca-certificates>=20161130 \
       cron \
       curl \
       dirmngr \
@@ -68,7 +73,8 @@ RUN apt-get -y update && \
       udev \
       util-linux \
       xz-utils \
-      zlib1g-dev && \
+      zlib1g-dev \
+      && \
   \
   sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
   \
@@ -85,7 +91,9 @@ RUN apt-get -y update && \
     echo 'update: --no-document'; \
   } >> /usr/local/etc/gemrc && \
   \
-  curl -sL "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-${RUBY_VERSION}.tar.xz" | tar -C /usr/src/ruby --strip-components=1 -xJf && \
+  echo XXXXX && \
+  curl -sL "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-${RUBY_VERSION}.tar.xz" | tar xJf - --strip-components=1 -C /usr/src/ruby && \
+  echo YYYYY && \
   \
   cd /usr/src/ruby && \
   autoconf && \
@@ -109,7 +117,8 @@ RUN apt-get -y update && \
       rspec_junit_formatter:0.3.0 \
       rspec-instafail:1.0.0 \
       turnip:2.1.1 \
-      turnip_formatter:0.5.0 && \
+      turnip_formatter:0.5.0 \
+  && \
   \
   cd /lib/systemd/system/sysinit.target.wants/ && \
     ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
