@@ -97,7 +97,7 @@ RUN \
     --build=x86_64-linux-gnu \
     --disable-install-doc \
     --enable-shared \
-  make -j "$(nproc)" && \
+  make && \
   make install && \
   cd / && \
   gem update --system ${RUBYGEMS_VERSION} && \
