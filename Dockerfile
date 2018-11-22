@@ -15,6 +15,7 @@
 FROM debian:stretch
 
 RUN dpkg --add-architecture amd64
+RUN dpkg --add-architecture armhf
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
@@ -111,8 +112,7 @@ RUN gem install \
       excon:0.61.0 \
       byebug:10.0.1
 
-RUN echo "root:Docker!" | chpasswd && \
-    cd /lib/systemd/system/sysinit.target.wants/ && \
+RUN cd /lib/systemd/system/sysinit.target.wants/ && \
     ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
     rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
     systemctl mask -- \
@@ -132,18 +132,8 @@ RUN echo "root:Docker!" | chpasswd && \
       systemd-logind.service && \
     systemctl set-default multi-user.target || : && \
     \
-    sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!'
-
-COPY packaging/bin /tmp/packages
-
-RUN \
-    if [ ! -f /tmp/packages/fio-bco_*_amd64.deb ] ; \
-    then (>&2 echo "no package to test found"); \
-    exit 1 ; fi && \
-    \
-    find /tmp/packages -type f -name 'fio-bco_*_amd64.deb' -exec \
-    apt-get -y install --no-install-recommends \
-    -f \{\} \;
+    sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
+    echo "root:Docker!" | chpasswd
 
 WORKDIR /opt/bbtest
 
