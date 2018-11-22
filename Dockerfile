@@ -15,7 +15,6 @@
 FROM debian:stretch
 
 RUN dpkg --add-architecture amd64
-RUN dpkg --add-architecture armhf
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
@@ -23,10 +22,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     RUBY_VERSION=2.5.3 \
     RUBYGEMS_VERSION=2.7.8 \
     BUNDLER_VERSION=1.17.1 \
-    GEM_HOME=/usr/local/bundle \
-    BUNDLE_PATH=/usr/local/bundle \
+    GEM_HOME=/usr/local/ruby \
+    BUNDLE_PATH=/usr/local/ruby \
     BUNDLE_SILENCE_ROOT_WARNING=1 \
-    BUNDLE_APP_CONFIG=/usr/local/bundle
+    BUNDLE_APP_CONFIG=/usr/local/ruby
 
 RUN apt-get update && \
     \
@@ -91,9 +90,7 @@ RUN apt-get update && \
     echo 'update: --no-document'; \
   } >> /usr/local/etc/gemrc && \
   \
-  echo XXXXX && \
   curl -sL "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-${RUBY_VERSION}.tar.xz" | tar xJf - --strip-components=1 -C /usr/src/ruby && \
-  echo YYYYY && \
   \
   cd /usr/src/ruby && \
   autoconf && \
@@ -113,7 +110,7 @@ RUN apt-get update && \
       byebug:10.0.1 \
       ffi-rzmq:2.0.4 \
       mongo:2.6.2 \
-      rspec:3:8 \
+      rspec:3.8 \
       rspec_junit_formatter:0.3.0 \
       rspec-instafail:1.0.0 \
       turnip:2.1.1 \
@@ -144,6 +141,8 @@ RUN apt-get update && \
     echo "root:Docker!" | chpasswd && \
     \
     rm -rf /var/lib/apt/lists/*
+
+ENV PATH ${GEM_HOME}/bin:${BUNDLE_PATH}/gems/bin:${PATH}
 
 WORKDIR /opt/bbtest
 
