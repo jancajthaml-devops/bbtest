@@ -110,7 +110,8 @@ RUN gem install \
       rspec_junit_formatter:0.3.0 \
       rspec-instafail:1.0.0 \
       excon:0.61.0 \
-      byebug:10.0.1
+      byebug:10.0.1 \
+      ffi-rzmq:2.0.4
 
 RUN cd /lib/systemd/system/sysinit.target.wants/ && \
     ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
