@@ -118,6 +118,7 @@ RUN apt-get update && \
         rspec-instafail:1.0.0 \
         turnip:2.1.1 \
         turnip_formatter:0.5.0 \
+        json-diff:0.4.1 \
     && \
     \
     mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
