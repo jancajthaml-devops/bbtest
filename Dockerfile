@@ -109,6 +109,7 @@ RUN apt-get update && \
     \
     gem install \
       \
+        json-schema:2.8.1 \
         bigdecimal:1.3.4 \
         byebug:10.0.1 \
         ffi-rzmq:2.0.4 \
