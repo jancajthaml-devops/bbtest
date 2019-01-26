@@ -59,6 +59,7 @@ RUN apt-get update && \
       libssl-dev \
       libsystemd0 \
       libudev1 \
+      libzmq5=4.2.1-4 \
       libzmq3-dev=4.2.1-4 \
       logrotate \
       lsb-release \
