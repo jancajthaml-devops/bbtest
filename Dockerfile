@@ -151,7 +151,8 @@ RUN apt-get update && \
     \
       requests==2.19.1 \
       ujson==1.35 \
-      inotify_simple \
+      inotify_simple==1.1.8 \
+      docker==3.7.0 \
       && \
     \
     cd /lib/systemd/system/sysinit.target.wants/ && \
