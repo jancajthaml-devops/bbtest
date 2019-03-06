@@ -172,6 +172,7 @@ RUN apt-get update && \
       cgproxy.service \
       systemd-tmpfiles-setup-dev.service \
       systemd-remount-fs.service \
+      systemd-timesyncd.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
     systemctl set-default multi-user.target || : && \
