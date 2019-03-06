@@ -165,14 +165,12 @@ RUN apt-get update && \
       etc-hosts.mount \
       etc-resolv.conf.mount \
       -.mount \
-      swap.target \
       getty.target \
       getty-static.service \
       dev-mqueue.mount \
       cgproxy.service \
       apt-daily.service \
       systemd-tmpfiles-setup-dev.service \
-      systemd-remount-fs.service \
       systemd-timesyncd.service \
       systemd-timedated.service \
       systemd-ask-password-wall.path \
