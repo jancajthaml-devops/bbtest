@@ -170,6 +170,7 @@ RUN apt-get update && \
       getty-static.service \
       dev-mqueue.mount \
       cgproxy.service \
+      apt-daily.service \
       systemd-tmpfiles-setup-dev.service \
       systemd-remount-fs.service \
       systemd-timesyncd.service \
