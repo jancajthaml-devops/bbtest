@@ -173,6 +173,7 @@ RUN apt-get update && \
       systemd-tmpfiles-setup-dev.service \
       systemd-remount-fs.service \
       systemd-timesyncd.service \
+      systemd-timedated.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
     systemctl set-default multi-user.target || : && \
