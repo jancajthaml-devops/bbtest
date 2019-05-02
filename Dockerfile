@@ -60,8 +60,8 @@ RUN apt-get update && \
       libssl-dev \
       libsystemd0 \
       libudev1 \
-      libzmq5=4.2.1-4+deb9u1 \
-      libzmq3-dev=4.2.1-4+deb9u1 \
+      libzmq5>=4.2.1~ \
+      libzmq3-dev>=4.2.1~ \
       logrotate \
       lsb-release \
       lsof \
@@ -80,7 +80,6 @@ RUN apt-get update && \
       mongodb-org>=4.0.3~ \
       nodejs>=10.11~ \
       init-system-helpers>=1.18~ \
-      libzmq5>=4.2.1~ \
       && \
     \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
