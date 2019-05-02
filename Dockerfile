@@ -77,6 +77,10 @@ RUN apt-get update && \
       util-linux \
       xz-utils \
       zlib1g-dev \
+      mongodb-org>=4.0.3~ \
+      nodejs>=10.11~ \
+      init-system-helpers>=1.18~ \
+      libzmq5>=4.2.1~ \
       && \
     \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
@@ -180,9 +184,13 @@ RUN apt-get update && \
     sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
     echo "root:Docker!" | chpasswd && \
     \
+    systemctl enable mongod && \
+    \
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH /usr/local/ruby/bin:${BUNDLE_PATH}/gems/bin:${PATH}
+
+COPY --from=library/docker:18.06 /usr/local/bin/docker /usr/bin/docker
 
 WORKDIR /opt/bbtest
 
