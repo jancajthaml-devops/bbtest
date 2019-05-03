@@ -37,7 +37,7 @@ RUN \
 
 RUN \
   curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo 'deb [ arch=amd64 ]https://deb.nodesource.com/node_10.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb [ arch=amd64 ] https://deb.nodesource.com/node_10.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
     echo 'deb-src https://deb.nodesource.com/node_10.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
   \
   curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
