@@ -29,10 +29,9 @@ RUN apt-get update && \
     \
     apt-get install -y --no-install-recommends \
       apt-utils \
-      ca-certificates>=20161130 \
-      && \
-    \
-    apt-get -y install --no-install-recommends \
+      ca-certificates>=20161130
+
+RUN apt-get -y install --no-install-recommends \
       at \
       autoconf \
       dbus \
@@ -75,23 +74,22 @@ RUN apt-get update && \
       util-linux \
       xz-utils \
       zlib1g-dev \
-      init-system-helpers>=1.18~ \
-      && \
-    \
-    sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
-    \
+      init-system-helpers>=1.18~
+
+RUN \
     curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-      apt-get install -y nodejs && \
-    \
+      apt-get install -y nodejs
+
+RUN \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
     echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" | \
       tee /etc/apt/sources.list.d/mongodb-org-4.0.list && \
     \
     apt-get update && \
     apt-get -y install --no-install-recommends \
-      mongodb-org>=4.0.3~ \
-    && \
-    \
+      mongodb-org>=4.0.3~
+
+RUN \
     mkdir -p /usr/local/etc /usr/src/ruby /usr/local/ruby && \
     { \
       echo 'install: --no-document'; \
@@ -107,7 +105,7 @@ RUN apt-get update && \
       --build=${gnuArch} \
       --disable-install-doc \
       --enable-shared && \
-    make && \
+    make -j $(getconf _NPROCESSORS_ONLN) && \
     make install && \
     cd / && \
     gem update --system ${RUBYGEMS_VERSION} && \
@@ -126,10 +124,9 @@ RUN apt-get update && \
         turnip:2.1.1 \
         turnip_formatter:0.5.0 \
         json-diff:0.4.1 \
-        deepsort:0.4.1 \
-    && \
-    \
-    mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
+        deepsort:0.4.1
+
+RUN mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
     \
     curl -sL "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" | tar xJC - --strip-components=1 -C /usr/src/python && \
     \
@@ -139,7 +136,7 @@ RUN apt-get update && \
       --build=${gnuArch} \
       --with-system-expat \
       --enable-shared && \
-    make && \
+    make -j $(getconf _NPROCESSORS_ONLN) && \
     make install && \
     cd / && \
     ldconfig && \
@@ -157,9 +154,9 @@ RUN apt-get update && \
       requests==2.19.1 \
       ujson==1.35 \
       inotify_simple==1.1.8 \
-      docker==3.7.0 \
-      && \
-    \
+      docker==3.7.0
+
+RUN RUN sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
     cd /lib/systemd/system/sysinit.target.wants/ && \
     ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
     rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
