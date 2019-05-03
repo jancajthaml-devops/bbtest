@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM debian:stretch
-
-RUN dpkg --add-architecture amd64
+FROM amd64/debian:stretch
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
@@ -60,8 +58,8 @@ RUN apt-get update && \
       libssl-dev \
       libsystemd0 \
       libudev1 \
-      libzmq5=4.2.1-4+deb9u1 \
-      libzmq3-dev=4.2.1-4+deb9u1 \
+      libzmq5>=4.2.1~ \
+      libzmq3-dev>=4.2.1~ \
       logrotate \
       lsb-release \
       lsof \
@@ -77,17 +75,22 @@ RUN apt-get update && \
       util-linux \
       xz-utils \
       zlib1g-dev \
+      init-system-helpers>=1.18~ \
       && \
     \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
     \
-    curl -sL https://deb.nodesource.com/setup_10.x | bash && \
+    curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
+      apt-get install -y nodejs && \
     \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
     echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" | \
       tee /etc/apt/sources.list.d/mongodb-org-4.0.list && \
     \
     apt-get update && \
+    apt-get -y install --no-install-recommends \
+      mongodb-org>=4.0.3~ \
+    && \
     \
     mkdir -p /usr/local/etc /usr/src/ruby /usr/local/ruby && \
     { \
@@ -99,8 +102,9 @@ RUN apt-get update && \
     \
     cd /usr/src/ruby && \
     autoconf && \
+    gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && \
     ./configure \
-      --build=x86_64-linux-gnu \
+      --build=${gnuArch} \
       --disable-install-doc \
       --enable-shared && \
     make && \
@@ -132,7 +136,7 @@ RUN apt-get update && \
     cd /usr/src/python && \
     autoconf && \
     ./configure \
-      --build=x86_64-linux-gnu \
+      --build=${gnuArch} \
       --with-system-expat \
       --enable-shared && \
     make && \
@@ -180,9 +184,13 @@ RUN apt-get update && \
     sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
     echo "root:Docker!" | chpasswd && \
     \
+    systemctl enable mongod && \
+    \
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH /usr/local/ruby/bin:${BUNDLE_PATH}/gems/bin:${PATH}
+
+COPY --from=amd64/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 WORKDIR /opt/bbtest
 
