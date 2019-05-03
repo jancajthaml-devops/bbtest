@@ -27,40 +27,39 @@ ENV DEBIAN_FRONTEND=noninteractive \
     APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
 
 RUN \
-  apt-get update && \
+  echo "deb [ arch=armhf ] http://cdn-fastly.deb.debian.org/debian/ stretch main non-free contrib" > /etc/apt/sources.list && \
+  echo "deb [ arch=armhf ] http://cdn-fastly.deb.debian.org/debian/ stretch-updates main non-free contrib" >> /etc/apt/sources.list && \
+  echo "deb [ arch=armhf ] http://cdn-fastly.deb.debian.org/debian/ stretch-backports main non-free contrib" >> /etc/apt/sources.list && \
+  echo "deb [ arch=armhf ] http://cdn-fastly.deb.debian.org/debian-security/ stretch/updates main non-free contrib" >> /etc/apt/sources.list && \
+  echo "deb-src http://cdn-fastly.deb.debian.org/debian/ stretch main non-free contrib" >> /etc/apt/sources.list && \
+  echo "deb-src http://cdn-fastly.deb.debian.org/debian/ stretch-updates main non-free contrib" >> /etc/apt/sources.list && \
+  echo "deb-src http://cdn-fastly.deb.debian.org/debian/ stretch-backports main non-free contrib" >> /etc/apt/sources.list && \
+  echo "deb-src http://cdn-fastly.deb.debian.org/debian-security/ stretch/updates main non-free contrib" >> /etc/apt/sources.list && \
+  :
+
+RUN \
+  apt-get update -y && \
   \
   apt-get install -y --no-install-recommends \
     apt-utils \
     ca-certificates>=20161130 \
     curl \
-    gnupg
-
-RUN \
-  curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo 'deb [ arch=armhf ] https://deb.nodesource.com/node_10.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
-    echo 'deb-src https://deb.nodesource.com/node_10.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
-  \
-  curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
-    echo 'deb [ arch=armhf ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 stretch main' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
-  :
-
-RUN \
-  apt-get update && \
-  \
-  apt-get install -y --no-install-recommends \
+    gnupg \
     at \
-    autoconf \
-    dbus \
-    bison \
+    git \
     tar \
-    bzip2 \
+    gcc \
+    lsof \
+    make \
+    udev \
+    dbus \
     cron \
+    bison \
+    bzip2 \
+    autoconf \
     tk-dev \
     uuid-dev \
-    dirmngr \
     dpkg-dev \
-    gcc \
-    git \
     libicu57 \
     libuv1 \
     initscripts \
@@ -77,23 +76,34 @@ RUN \
     libzmq3-dev>=4.2.1~ \
     logrotate \
     lsb-release \
-    lsof \
-    make \
     netcat-openbsd \
     procps \
     rsyslog \
-    ruby \
     ssmtp \
     systemd \
     sysvinit-utils \
-    udev \
     util-linux \
     xz-utils \
     zlib1g-dev \
     apt-transport-https \
-    init-system-helpers>=1.18~ \
+    init-system-helpers>=1.18~
+
+RUN \
+  curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
+    echo 'deb [ arch=armhf ] https://deb.nodesource.com/node_10.x xenial main' > /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb-src https://deb.nodesource.com/node_10.x xenial main' >> /etc/apt/sources.list.d/nodesource.list && \
+  \
+  curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
+    echo 'deb [ arch=armhf ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+  :
+
+RUN \
+  apt-get update -y && \
+  \
+  apt-get install -y \
     nodejs \
-    mongodb-org
+    mongodb-org \
+  && :
 
 RUN \
     mkdir -p /usr/local/etc /usr/src/ruby /usr/local/ruby && \
