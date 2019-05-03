@@ -23,75 +23,79 @@ ENV DEBIAN_FRONTEND=noninteractive \
     BUNDLER_VERSION=1.17.1 \
     BUNDLE_PATH=/usr/local/ruby \
     BUNDLE_SILENCE_ROOT_WARNING=1 \
-    BUNDLE_APP_CONFIG=/usr/local/ruby
+    BUNDLE_APP_CONFIG=/usr/local/ruby \
+    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no \
 
-RUN apt-get update && \
-    \
-    apt-get install -y --no-install-recommends \
-      apt-utils \
-      ca-certificates>=20161130 \
-      && \
-    \
-    apt-get -y install --no-install-recommends \
-      at \
-      autoconf \
-      dbus \
-      bison \
-      tar \
-      bzip2 \
-      cron \
-      curl \
-      tk-dev \
-      uuid-dev \
-      dirmngr \
-      dpkg-dev \
-      gcc \
-      git \
-      gnupg \
-      initscripts \
-      libbz2-dev \
-      libffi-dev \
-      libgdbm-dev \
-      libgdbm3 \
-      libglib2.0-dev \
-      libreadline-dev \
-      libssl-dev \
-      libsystemd0 \
-      libudev1 \
-      libzmq5>=4.2.1~ \
-      libzmq3-dev>=4.2.1~ \
-      logrotate \
-      lsb-release \
-      lsof \
-      make \
-      netcat-openbsd \
-      procps \
-      rsyslog \
-      ruby \
-      ssmtp \
-      systemd \
-      sysvinit-utils \
-      udev \
-      util-linux \
-      xz-utils \
-      zlib1g-dev \
-      init-system-helpers>=1.18~ \
-      && \
-    \
-    sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
-    \
-    curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-      apt-get install -y nodejs && \
-    \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
-    echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" | \
-      tee /etc/apt/sources.list.d/mongodb-org-4.0.list && \
-    \
-    apt-get update && \
-    apt-get -y install --no-install-recommends \
-      mongodb-org>=4.0.3~ \
-    && \
-    \
+RUN \
+  apt-get update && \
+  \
+  apt-get install -y --no-install-recommends \
+    apt-utils \
+    ca-certificates>=20161130 \
+    curl \
+    gnupg
+
+RUN \
+  curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
+    echo 'deb [ arch=amd64 ]https://deb.nodesource.com/node_10.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb-src https://deb.nodesource.com/node_10.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
+  \
+  curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
+    echo 'deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+  :
+
+RUN \
+  apt-get update && \
+  \
+  apt-get -y install --no-install-recommends \
+    at \
+    autoconf \
+    dbus \
+    bison \
+    tar \
+    bzip2 \
+    cron \
+    tk-dev \
+    uuid-dev \
+    dirmngr \
+    dpkg-dev \
+    gcc \
+    git \
+    libicu57 \
+    libuv1 \
+    initscripts \
+    libbz2-dev \
+    libffi-dev \
+    libgdbm-dev \
+    libgdbm3 \
+    libglib2.0-dev \
+    libreadline-dev \
+    libssl-dev \
+    libsystemd0 \
+    libudev1 \
+    libzmq5>=4.2.1~ \
+    libzmq3-dev>=4.2.1~ \
+    logrotate \
+    lsb-release \
+    lsof \
+    make \
+    netcat-openbsd \
+    procps \
+    rsyslog \
+    ruby \
+    ssmtp \
+    systemd \
+    sysvinit-utils \
+    udev \
+    util-linux \
+    xz-utils \
+    zlib1g-dev \
+    apt-transport-https \
+    init-system-helpers>=1.18~ \
+    nodejs \
+    mongodb-org
+
+RUN \
     mkdir -p /usr/local/etc /usr/src/ruby /usr/local/ruby && \
     { \
       echo 'install: --no-document'; \
@@ -107,7 +111,7 @@ RUN apt-get update && \
       --build=${gnuArch} \
       --disable-install-doc \
       --enable-shared && \
-    make && \
+    make -j $(getconf _NPROCESSORS_ONLN) && \
     make install && \
     cd / && \
     gem update --system ${RUBYGEMS_VERSION} && \
@@ -126,10 +130,9 @@ RUN apt-get update && \
         turnip:2.1.1 \
         turnip_formatter:0.5.0 \
         json-diff:0.4.1 \
-        deepsort:0.4.1 \
-    && \
-    \
-    mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
+        deepsort:0.4.1
+
+RUN mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
     \
     curl -sL "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" | tar xJC - --strip-components=1 -C /usr/src/python && \
     \
@@ -139,7 +142,7 @@ RUN apt-get update && \
       --build=${gnuArch} \
       --with-system-expat \
       --enable-shared && \
-    make && \
+    make -j $(getconf _NPROCESSORS_ONLN) && \
     make install && \
     cd / && \
     ldconfig && \
@@ -157,8 +160,11 @@ RUN apt-get update && \
       requests==2.19.1 \
       ujson==1.35 \
       inotify_simple==1.1.8 \
-      docker==3.7.0 \
-      && \
+      docker==3.7.0
+
+RUN \
+    sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
+    sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
     \
     cd /lib/systemd/system/sysinit.target.wants/ && \
     ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
@@ -179,14 +185,12 @@ RUN apt-get update && \
       systemd-timedated.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
-    systemctl set-default multi-user.target || : && \
+    (systemctl enable mongod || :) && \
+    (systemctl set-default multi-user.target || :) && \
     \
-    sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
     echo "root:Docker!" | chpasswd && \
     \
-    systemctl enable mongod && \
-    \
-    rm -rf /var/lib/apt/lists/*
+
 
 ENV PATH /usr/local/ruby/bin:${BUNDLE_PATH}/gems/bin:${PATH}
 
