@@ -37,17 +37,18 @@ RUN \
 
 RUN \
   curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo 'deb [ arch=arm64 ] https://deb.nodesource.com/node_10.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
-    echo 'deb-src https://deb.nodesource.com/node_10.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb [ arch=arm64 ] https://deb.nodesource.com/node_10.x xenial main' > /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb-src https://deb.nodesource.com/node_10.x xenial main' >> /etc/apt/sources.list.d/nodesource.list && \
   \
   curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
-    echo 'deb [ arch=arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 stretch main' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+    echo 'deb [ arch=arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+    echo 'deb-src https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' >> /etc/apt/sources.list.d/mongodb-org-4.0.list && \
   :
 
 RUN \
   apt-get update && \
   \
-  apt-get -y install --no-install-recommends \
+  apt-get install -y --no-install-recommends \
     at \
     autoconf \
     dbus \
@@ -132,7 +133,8 @@ RUN \
         json-diff:0.4.1 \
         deepsort:0.4.1
 
-RUN mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
+RUN \
+    mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
     \
     curl -sL "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" | tar xJC - --strip-components=1 -C /usr/src/python && \
     \
