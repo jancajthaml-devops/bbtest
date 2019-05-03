@@ -24,7 +24,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     BUNDLE_PATH=/usr/local/ruby \
     BUNDLE_SILENCE_ROOT_WARNING=1 \
     BUNDLE_APP_CONFIG=/usr/local/ruby \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no \
+    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
 
 RUN \
   apt-get update && \
