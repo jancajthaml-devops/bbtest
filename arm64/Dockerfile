@@ -41,7 +41,7 @@ RUN \
     echo 'deb-src https://deb.nodesource.com/node_10.x stretch main' >> /etc/apt/sources.list.d/nodesource.list && \
   \
   curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
-    echo 'deb [ arch=arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+    echo 'deb [ arch=arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 stretch main' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
   :
 
 RUN \
@@ -188,9 +188,7 @@ RUN \
     (systemctl enable mongod || :) && \
     (systemctl set-default multi-user.target || :) && \
     \
-    echo "root:Docker!" | chpasswd && \
-    \
-
+    echo "root:Docker!" | chpasswd
 
 ENV PATH /usr/local/ruby/bin:${BUNDLE_PATH}/gems/bin:${PATH}
 
