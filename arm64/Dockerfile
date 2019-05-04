@@ -129,22 +129,7 @@ RUN \
     make install && \
     cd / && \
     gem update --system ${RUBYGEMS_VERSION} && \
-    rm -r /root/.gem/ /usr/src/ruby && \
-    \
-    gem install \
-      \
-        json-schema:2.8.1 \
-        bigdecimal:1.3.4 \
-        byebug:10.0.1 \
-        ffi-rzmq:2.0.4 \
-        mongo:2.6.2 \
-        rspec:3.8 \
-        rspec_junit_formatter:0.3.0 \
-        rspec-instafail:1.0.0 \
-        turnip:2.1.1 \
-        turnip_formatter:0.5.0 \
-        json-diff:0.4.1 \
-        deepsort:0.4.1
+    rm -r /root/.gem/ /usr/src/ruby
 
 RUN \
     mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
@@ -168,7 +153,23 @@ RUN \
         -o \
         \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
       \) -exec rm -rf '{}' + && \
-    rm -rf /usr/src/python && \
+    rm -rf /usr/src/python
+
+RUN \
+    gem install \
+    \
+      json-schema:2.8.1 \
+      bigdecimal:1.3.4 \
+      byebug:10.0.1 \
+      ffi-rzmq:2.0.4 \
+      mongo:2.6.2 \
+      rspec:3.8 \
+      rspec_junit_formatter:0.3.0 \
+      rspec-instafail:1.0.0 \
+      turnip:2.1.1 \
+      turnip_formatter:0.5.0 \
+      json-diff:0.4.1 \
+      deepsort:0.4.1 && \
     \
     pip3 install \
     \
