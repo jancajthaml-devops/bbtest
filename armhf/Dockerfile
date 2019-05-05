@@ -12,30 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM arm32v7/debian:stretch
+FROM arm32v7/debian:stretch-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
-    PYTHON_VERSION=3.7.1 \
-    RUBY_MAJOR=2.5 \
-    RUBY_VERSION=2.5.3 \
-    RUBYGEMS_VERSION=2.7.8 \
-    BUNDLER_VERSION=1.17.1 \
-    BUNDLE_PATH=/usr/local/ruby \
-    BUNDLE_SILENCE_ROOT_WARNING=1 \
-    BUNDLE_APP_CONFIG=/usr/local/ruby \
     APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
-
-RUN \
-  echo "deb [ arch=armhf ] http://cdn-fastly.deb.debian.org/debian/ stretch main non-free contrib" > /etc/apt/sources.list && \
-  echo "deb [ arch=armhf ] http://cdn-fastly.deb.debian.org/debian/ stretch-updates main non-free contrib" >> /etc/apt/sources.list && \
-  echo "deb [ arch=armhf ] http://cdn-fastly.deb.debian.org/debian/ stretch-backports main non-free contrib" >> /etc/apt/sources.list && \
-  echo "deb [ arch=armhf ] http://cdn-fastly.deb.debian.org/debian-security/ stretch/updates main non-free contrib" >> /etc/apt/sources.list && \
-  echo "deb-src http://cdn-fastly.deb.debian.org/debian/ stretch main non-free contrib" >> /etc/apt/sources.list && \
-  echo "deb-src http://cdn-fastly.deb.debian.org/debian/ stretch-updates main non-free contrib" >> /etc/apt/sources.list && \
-  echo "deb-src http://cdn-fastly.deb.debian.org/debian/ stretch-backports main non-free contrib" >> /etc/apt/sources.list && \
-  echo "deb-src http://cdn-fastly.deb.debian.org/debian-security/ stretch/updates main non-free contrib" >> /etc/apt/sources.list && \
-  :
 
 RUN \
   apt-get update -y && \
@@ -72,8 +53,6 @@ RUN \
     libssl-dev \
     libsystemd0 \
     libudev1 \
-    libzmq5>=4.2.1~ \
-    libzmq3-dev>=4.2.1~ \
     logrotate \
     lsb-release \
     netcat-openbsd \
@@ -86,70 +65,33 @@ RUN \
     xz-utils \
     zlib1g-dev \
     apt-transport-https \
+    libzmq5>=4.2.1~ \
+    libzmq3-dev>=4.2.1~ \
     init-system-helpers>=1.18~
 
 RUN \
   curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo 'deb [ arch=armhf ] https://deb.nodesource.com/node_10.x xenial main' > /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb [ arch=arm64 ] https://deb.nodesource.com/node_10.x xenial main' > /etc/apt/sources.list.d/nodesource.list && \
     echo 'deb-src https://deb.nodesource.com/node_10.x xenial main' >> /etc/apt/sources.list.d/nodesource.list && \
   \
   curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
-    echo 'deb [ arch=armhf ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+    echo 'deb [ arch=arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
   :
+
+RUN curl -s "https://mirrors.mediatemple.net/debian-archive/debian/pool/main/o/openssl/libssl1.0.0_1.0.2l-1~bpo8+1_arm64.deb" -O && \
+    dpkg -i libssl1.0.0_1.0.2l-1~bpo8+1_arm64.deb && \
+    rm libssl1.0.0_1.0.2l-1~bpo8+1_arm64.deb
 
 RUN \
   apt-get update -y && \
   \
   apt-get install -y \
+    ruby-full \
+    python3 \
+    python3-pip \
     nodejs \
     mongodb-org \
   && :
-
-RUN \
-    mkdir -p /usr/local/etc /usr/src/ruby /usr/local/ruby && \
-    { \
-      echo 'install: --no-document'; \
-      echo 'update: --no-document'; \
-    } >> /usr/local/etc/gemrc && \
-    \
-    curl -sL "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-${RUBY_VERSION}.tar.xz" | tar xJf - --strip-components=1 -C /usr/src/ruby && \
-    \
-    cd /usr/src/ruby && \
-    autoconf && \
-    gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && \
-    ./configure \
-      --build=${gnuArch} \
-      --disable-install-doc \
-      --enable-shared && \
-    make -j $(getconf _NPROCESSORS_ONLN) && \
-    make install && \
-    cd / && \
-    gem update --system ${RUBYGEMS_VERSION} && \
-    rm -r /root/.gem/ /usr/src/ruby
-
-RUN \
-    mkdir -p /usr/local/etc /usr/src/python /usr/local/python && \
-    \
-    curl -sL "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" | tar xJC - --strip-components=1 -C /usr/src/python && \
-    \
-    cd /usr/src/python && \
-    autoconf && \
-    ./configure \
-      --build=${gnuArch} \
-      --with-system-expat \
-      --enable-shared && \
-    make -j $(getconf _NPROCESSORS_ONLN) && \
-    make install && \
-    cd / && \
-    ldconfig && \
-    \
-    find /usr/local -depth \
-      \( \
-        \( -type d -a \( -name test -o -name tests \) \) \
-        -o \
-        \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
-      \) -exec rm -rf '{}' + && \
-    rm -rf /usr/src/python
 
 RUN \
     gem install \
@@ -165,14 +107,17 @@ RUN \
       turnip:2.1.1 \
       turnip_formatter:0.5.0 \
       json-diff:0.4.1 \
-      deepsort:0.4.1 && \
+      deepsort:0.4.1 \
+    && \
     \
     pip3 install \
     \
       requests==2.19.1 \
       ujson==1.35 \
       inotify_simple==1.1.8 \
-      docker==3.7.0
+      docker==3.7.0 \
+    && \
+    :
 
 RUN \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
@@ -202,8 +147,6 @@ RUN \
     \
     echo "root:Docker!" | chpasswd
 
-ENV PATH /usr/local/ruby/bin:${BUNDLE_PATH}/gems/bin:${PATH}
-
 COPY --from=arm32v7/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 WORKDIR /opt/bbtest
@@ -211,3 +154,4 @@ WORKDIR /opt/bbtest
 VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
 
 ENTRYPOINT ["/lib/systemd/systemd"]
+
