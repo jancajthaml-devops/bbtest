@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM amd64/debian:stretch-slim
+FROM amd64/debian:stretch
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
