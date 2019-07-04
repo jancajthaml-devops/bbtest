@@ -114,8 +114,8 @@ RUN \
     \
       requests==2.19.1 \
       ujson==1.35 \
-      inotify_simple==1.1.8 \
       docker==3.7.0 \
+      pyzmq==18.0.2 \
     && \
     :
 
