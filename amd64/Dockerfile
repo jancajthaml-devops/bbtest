@@ -116,6 +116,7 @@ RUN \
       ujson==1.35 \
       docker==3.7.0 \
       pyzmq==18.0.2 \
+      matplotlib==2.2.2 \
     && \
     :
 
