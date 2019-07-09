@@ -117,6 +117,8 @@ RUN \
       docker==3.7.0 \
       pyzmq==18.0.2 \
       matplotlib==2.2.2 \
+      scipy==1.3.0 \
+      numpy==1.16.4 \
     && \
     :
 
