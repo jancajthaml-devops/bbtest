@@ -156,4 +156,6 @@ WORKDIR /opt/bbtest
 
 VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
 
-ENTRYPOINT ["/lib/systemd/systemd"]
+ADD entrypoint.sh /
+
+ENTRYPOINT ["/entrypoint.sh"]
