@@ -14,9 +14,11 @@
 
 FROM arm32v7/debian:stretch-slim
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8 \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
+ENV LANG=C.UTF-8
+ENV container docker
+ENV LC_ALL C
+ENV DEBIAN_FRONTEND noninteractive
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
 
 RUN \
   apt-get update -y && \
@@ -71,16 +73,16 @@ RUN \
 
 RUN \
   curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo 'deb [ arch=arm64 ] https://deb.nodesource.com/node_10.x xenial main' > /etc/apt/sources.list.d/nodesource.list && \
+    echo 'deb [ arch=armhf ] https://deb.nodesource.com/node_10.x xenial main' > /etc/apt/sources.list.d/nodesource.list && \
     echo 'deb-src https://deb.nodesource.com/node_10.x xenial main' >> /etc/apt/sources.list.d/nodesource.list && \
   \
   curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
-    echo 'deb [ arch=arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+    echo 'deb [ arch=armhf ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
   :
 
-RUN curl -s "https://mirrors.mediatemple.net/debian-archive/debian/pool/main/o/openssl/libssl1.0.0_1.0.2l-1~bpo8+1_arm64.deb" -O && \
-    dpkg -i libssl1.0.0_1.0.2l-1~bpo8+1_arm64.deb && \
-    rm libssl1.0.0_1.0.2l-1~bpo8+1_arm64.deb
+RUN curl -s "http://mirrordirector.raspbian.org/raspbian/pool/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u11_armhf.deb" -O && \
+    dpkg -i libssl1.0.0_1.0.1t-1+deb8u11_armhf.deb && \
+    rm libssl1.0.0_1.0.1t-1+deb8u11_armhf.deb
 
 RUN \
   apt-get update -y && \
@@ -126,9 +128,6 @@ RUN \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
     sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
     \
-    cd /lib/systemd/system/sysinit.target.wants/ && \
-    ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
-    rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
     systemctl mask -- \
       tmp.mount \
       etc-hostname.mount \
@@ -145,17 +144,27 @@ RUN \
       systemd-timedated.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
-    (systemctl enable mongod || :) && \
-    (systemctl set-default multi-user.target || :) && \
     \
-    echo "root:Docker!" | chpasswd
+    echo "root:Docker!" | chpasswd && \
+    \
+    rm -f \
+      /lib/systemd/system/multi-user.target.wants/* \
+      /etc/systemd/system/*.wants/* \
+      /lib/systemd/system/local-fs.target.wants/* \
+      /lib/systemd/system/sockets.target.wants/*udev* \
+      /lib/systemd/system/sockets.target.wants/*initctl* \
+      /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* \
+      /lib/systemd/system/systemd-update-utmp* && \
+    \
+    (systemctl set-default multi-user.target || :) && \
+    (systemctl enable mongod || :)
 
 COPY --from=arm32v7/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 WORKDIR /opt/bbtest
 
-VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
+VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock" ]
 
 ADD entrypoint.sh /
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT [ "/entrypoint.sh" ]

@@ -14,9 +14,11 @@
 
 FROM amd64/debian:stretch-slim
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8 \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
+ENV LANG=C.UTF-8
+ENV container docker
+ENV LC_ALL C
+ENV DEBIAN_FRONTEND noninteractive
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
 
 RUN \
   apt-get update -y && \
@@ -78,7 +80,7 @@ RUN \
     echo 'deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
   :
 
-RUN curl -s "https://distros-repository.usharesoft.com/debian/jessie-backports/mirror/ftp.fr.debian.org/debian/pool/main/o/openssl/libssl1.0.0_1.0.2l-1~bpo8+1_amd64.deb" -O && \
+RUN curl -s "https://mirrors.mediatemple.net/debian-archive/debian/pool/main/o/openssl/libssl1.0.0_1.0.2l-1~bpo8+1_amd64.deb" -O && \
     dpkg -i libssl1.0.0_1.0.2l-1~bpo8+1_amd64.deb && \
     rm libssl1.0.0_1.0.2l-1~bpo8+1_amd64.deb
 
@@ -126,9 +128,6 @@ RUN \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
     sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
     \
-    cd /lib/systemd/system/sysinit.target.wants/ && \
-    ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
-    rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
     systemctl mask -- \
       tmp.mount \
       etc-hostname.mount \
@@ -145,17 +144,27 @@ RUN \
       systemd-timedated.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
-    (systemctl enable mongod || :) && \
-    (systemctl set-default multi-user.target || :) && \
     \
-    echo "root:Docker!" | chpasswd
+    echo "root:Docker!" | chpasswd && \
+    \
+    rm -f \
+      /lib/systemd/system/multi-user.target.wants/* \
+      /etc/systemd/system/*.wants/* \
+      /lib/systemd/system/local-fs.target.wants/* \
+      /lib/systemd/system/sockets.target.wants/*udev* \
+      /lib/systemd/system/sockets.target.wants/*initctl* \
+      /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* \
+      /lib/systemd/system/systemd-update-utmp* && \
+    \
+    (systemctl set-default multi-user.target || :) && \
+    (systemctl enable mongod || :)
 
 COPY --from=amd64/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 WORKDIR /opt/bbtest
 
-VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
+VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock" ]
 
 ADD entrypoint.sh /
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT [ "/entrypoint.sh" ]

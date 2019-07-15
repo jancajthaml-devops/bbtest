@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM arm64v8/debian:stretch-slim
+FROM amr64/debian:stretch-slim
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8 \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
+ENV LANG=C.UTF-8
+ENV container docker
+ENV LC_ALL C
+ENV DEBIAN_FRONTEND noninteractive
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
 
 RUN \
   apt-get update -y && \
@@ -126,9 +128,6 @@ RUN \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
     sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
     \
-    cd /lib/systemd/system/sysinit.target.wants/ && \
-    ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
-    rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
     systemctl mask -- \
       tmp.mount \
       etc-hostname.mount \
@@ -145,17 +144,27 @@ RUN \
       systemd-timedated.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
-    (systemctl enable mongod || :) && \
-    (systemctl set-default multi-user.target || :) && \
     \
-    echo "root:Docker!" | chpasswd
+    echo "root:Docker!" | chpasswd && \
+    \
+    rm -f \
+      /lib/systemd/system/multi-user.target.wants/* \
+      /etc/systemd/system/*.wants/* \
+      /lib/systemd/system/local-fs.target.wants/* \
+      /lib/systemd/system/sockets.target.wants/*udev* \
+      /lib/systemd/system/sockets.target.wants/*initctl* \
+      /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* \
+      /lib/systemd/system/systemd-update-utmp* && \
+    \
+    (systemctl set-default multi-user.target || :) && \
+    (systemctl enable mongod || :)
 
-COPY --from=arm64v8/docker:18 /usr/local/bin/docker /usr/bin/docker
+COPY --from=amr64/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 WORKDIR /opt/bbtest
 
-VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
+VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock" ]
 
 ADD entrypoint.sh /
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT [ "/entrypoint.sh" ]
