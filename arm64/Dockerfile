@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM amr64/debian:stretch-slim
+FROM arm64/debian:stretch-slim
 
 ENV LANG=C.UTF-8
 ENV container docker
@@ -159,7 +159,7 @@ RUN \
     (systemctl set-default multi-user.target || :) && \
     (systemctl enable mongod || :)
 
-COPY --from=amr64/docker:18 /usr/local/bin/docker /usr/bin/docker
+COPY --from=arm64/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 WORKDIR /opt/bbtest
 
