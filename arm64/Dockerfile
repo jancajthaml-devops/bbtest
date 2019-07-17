@@ -106,6 +106,7 @@ RUN \
       rspec:3.8 \
       rspec_junit_formatter:0.3.0 \
       rspec-instafail:1.0.0 \
+      ci_reporter_rspec:1.0.0 \
       turnip:2.1.1 \
       turnip_formatter:0.5.0 \
       json-diff:0.4.1 \
