@@ -104,6 +104,7 @@ RUN \
       ffi-rzmq:2.0.4 \
       mongo:2.6.2 \
       rspec:3.8 \
+      rspec-junit:0.1.2 \
       rspec_junit_formatter:0.3.0 \
       rspec-instafail:1.0.0 \
       ci_reporter_rspec:1.0.0 \
