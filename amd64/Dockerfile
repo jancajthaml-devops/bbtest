@@ -105,6 +105,7 @@ RUN \
       mongo:2.6.2 \
       rspec:3.8 \
       rspec_junit_formatter:0.3.0 \
+      rspec-legacy_formatters:1.0.1 \
       rspec-instafail:1.0.0 \
       ci_reporter_rspec:1.0.0 \
       turnip:2.1.1 \
