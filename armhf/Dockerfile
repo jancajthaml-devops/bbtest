@@ -116,6 +116,7 @@ RUN \
     \
     pip3 install \
     \
+      behave==1.2.6 \
       requests==2.19.1 \
       ujson==1.35 \
       docker==3.7.0 \
@@ -123,6 +124,7 @@ RUN \
       matplotlib==2.2.2 \
       scipy==1.3.0 \
       numpy==1.16.4 \
+      pynng==0.4.0 \
     && \
     :
 
