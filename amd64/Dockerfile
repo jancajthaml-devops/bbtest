@@ -124,6 +124,7 @@ RUN \
       scipy==1.3.0 \
       numpy==1.16.4 \
       pynng==0.4.0 \
+      behave2cucumber==1.0.3 \
     && \
     :
 
