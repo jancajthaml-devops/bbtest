@@ -117,6 +117,7 @@ RUN \
     pip3 install \
     \
       behave==1.2.6 \
+      pymongo==3.9.0 \
       requests==2.19.1 \
       ujson==1.35 \
       docker==3.7.0 \
