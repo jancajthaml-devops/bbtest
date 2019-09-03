@@ -14,11 +14,13 @@
 
 FROM arm64/debian:stretch-slim
 
-ENV LANG=C.UTF-8
+ENV LANG C.UTF-8
+ENV JAVA_HOME /usr/local/openjdk-8
 ENV container docker
 ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
-ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE no
+ENV PATH ${JAVA_HOME}/bin:${PATH}
 
 RUN \
   apt-get update -y && \
@@ -72,10 +74,19 @@ RUN \
     init-system-helpers>=1.18~
 
 RUN \
+  echo "installing nodejs" && \
   curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
     echo 'deb [ arch=arm64 ] https://deb.nodesource.com/node_10.x xenial main' > /etc/apt/sources.list.d/nodesource.list && \
     echo 'deb-src https://deb.nodesource.com/node_10.x xenial main' >> /etc/apt/sources.list.d/nodesource.list && \
   \
+  echo "installing openjdk" && \
+  mkdir -p ${JAVA_HOME} && \
+  curl -fsL "https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u212-b04/OpenJDK8U-x64_linux_8u212b04.tar.gz" | tar xfz - -C /tmp && \
+  mv /tmp/openjdk-8u212-b04/* ${JAVA_HOME}/ && \
+  rm -rf /tmp/openjdk-8u212-b04 && \
+  echo "OK" && \
+  \
+  echo "installing mongodb" && \
   curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
     echo 'deb [ arch=arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
   :
