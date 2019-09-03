@@ -84,6 +84,7 @@ RUN \
   curl -fsL "https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u212-b04/OpenJDK8U-x64_linux_8u212b04.tar.gz" | tar xfz - -C /tmp && \
   mv /tmp/openjdk-8u212-b04/* ${JAVA_HOME}/ && \
   rm -rf /tmp/openjdk-8u212-b04 && \
+  ln -s ${JAVA_HOME}/bin/java /bin/java && \
   echo "OK" && \
   \
   echo "installing mongodb" && \
