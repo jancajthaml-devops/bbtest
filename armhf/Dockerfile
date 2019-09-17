@@ -111,6 +111,7 @@ RUN \
     \
       behave==1.2.6 \
       pymongo==3.9.0 \
+      psycopg2-binary==2.8.3 \
       requests==2.19.1 \
       ujson==1.35 \
       docker==3.7.0 \
