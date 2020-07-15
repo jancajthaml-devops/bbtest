@@ -5,7 +5,6 @@ set -e
 if [ "$1" ] ; then
   # execute it
   exec "$@"
+else
+  exec /lib/systemd/systemd
 fi
-
-# execute systemd
-exec /lib/systemd/systemd

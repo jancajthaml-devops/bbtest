@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM arm32v7/debian:stretch-slim
+FROM arm32v7/debian:buster-slim
 
 ENV LANG C.UTF-8
-ENV JAVA_HOME /usr/local/openjdk-8
+ENV JAVA_HOME /usr/local/openjdk-11
 ENV container docker
 ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
@@ -27,7 +27,7 @@ RUN \
   \
   apt-get install -y --no-install-recommends \
     apt-utils \
-    ca-certificates>=20161130 \
+    ca-certificates \
     curl \
     gnupg \
     at \
@@ -71,25 +71,13 @@ RUN \
     apt-transport-https \
     libzmq5>=4.2.1~ \
     libzmq3-dev>=4.2.1~ \
-    init-system-helpers>=1.18~
+    init-system-helpers
 
 RUN \
   echo "installing nodejs" && \
   curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
     echo 'deb [ arch=armhf ] https://deb.nodesource.com/node_10.x xenial main' > /etc/apt/sources.list.d/nodesource.list && \
     echo 'deb-src https://deb.nodesource.com/node_10.x xenial main' >> /etc/apt/sources.list.d/nodesource.list && \
-  echo "installing openjdk" && \
-  mkdir -p ${JAVA_HOME} && \
-  \
-  curl -fsL "https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u212-b04/OpenJDK8U-x64_linux_8u212b04.tar.gz" | tar xfz - -C /tmp && \
-  mv /tmp/openjdk-8u212-b04/* ${JAVA_HOME}/ && \
-  rm -rf /tmp/openjdk-8u212-b04 && \
-  ln -s ${JAVA_HOME}/bin/java /bin/java && \
-  echo "OK" && \
-  \
-  echo "installing mongodb" && \
-  curl -s https://www.mongodb.org/static/pgp/server-4.0.asc | apt-key add - && \
-    echo 'deb [ arch=armhf ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse' > /etc/apt/sources.list.d/mongodb-org-4.0.list && \
   :
 
 RUN curl -s "http://mirrordirector.raspbian.org/raspbian/pool/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u11_armhf.deb" -O && \
@@ -110,7 +98,6 @@ RUN \
     pip3 install \
     \
       behave==1.2.6 \
-      pymongo==3.9.0 \
       psycopg2-binary==2.8.3 \
       requests==2.19.1 \
       ujson==1.35 \
@@ -157,7 +144,7 @@ RUN \
       /lib/systemd/system/systemd-update-utmp* && \
     \
     (systemctl set-default multi-user.target || :) && \
-    (systemctl enable mongod || :)
+    :
 
 COPY --from=arm32v7/docker:18 /usr/local/bin/docker /usr/bin/docker
 
