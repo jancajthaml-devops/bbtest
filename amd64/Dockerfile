@@ -84,8 +84,6 @@ RUN systemctl mask -- \
       dev-hugepages.mount \
       sys-fs-fuse-connections.mount \
       systemd-tmpfiles-setup-dev.service \
-      systemd-timesyncd.service \
-      systemd-timedated.service \
       systemd-firstboot.service \
       systemd-udevd.service \
       systemd-resolved.service \
