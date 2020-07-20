@@ -78,7 +78,8 @@ RUN \
 
 RUN \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
-    sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!'
+    sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
+    printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 
 RUN systemctl mask -- \
       dev-hugepages.mount \
