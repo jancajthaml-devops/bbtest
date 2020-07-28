@@ -157,3 +157,5 @@ VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock" ]
 ADD entrypoint.sh /
 
 ENTRYPOINT [ "/entrypoint.sh" ]
+
+CMD [ "/sbin/init" ]

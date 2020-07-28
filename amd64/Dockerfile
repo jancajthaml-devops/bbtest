@@ -103,10 +103,10 @@ COPY --from=amd64/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 STOPSIGNAL SIGRTMIN+3
 
-WORKDIR /opt/bbtest
-
 VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock" ]
 
 ADD entrypoint.sh /
 
 ENTRYPOINT [ "/entrypoint.sh" ]
+
+CMD [ "/sbin/init" ]
