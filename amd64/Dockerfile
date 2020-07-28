@@ -14,6 +14,8 @@
 
 FROM amd64/debian:buster
 
+LABEL com.circleci.preserve-entrypoint=true
+
 ENV LANG C.UTF-8
 ENV container docker
 ENV LC_ALL C

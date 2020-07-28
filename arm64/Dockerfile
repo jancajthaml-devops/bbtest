@@ -14,6 +14,8 @@
 
 FROM arm64/debian:buster-slim
 
+LABEL com.circleci.preserve-entrypoint=true
+
 ENV LANG C.UTF-8
 ENV JAVA_HOME /usr/local/openjdk-11
 ENV container docker
