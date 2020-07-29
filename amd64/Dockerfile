@@ -38,8 +38,8 @@ RUN \
     build-essential \
     rsyslog \
     multiarch-support \
-    libzmq5>=4.2.1~ \
-    libzmq3-dev>=4.2.1~ \
+    libzmq5>=4.3.1~ \
+    libzmq3-dev>=4.3.1~ \
     openjdk-11-jre \
     python3 \
     python3-dev \

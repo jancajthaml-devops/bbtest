@@ -71,8 +71,8 @@ RUN \
     xz-utils \
     zlib1g-dev \
     apt-transport-https \
-    libzmq5>=4.2.1~ \
-    libzmq3-dev>=4.2.1~ \
+    libzmq5>=4.3.1~ \
+    libzmq3-dev>=4.3.1~ \
     init-system-helpers
 
 RUN \
