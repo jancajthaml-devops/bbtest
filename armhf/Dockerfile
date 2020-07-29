@@ -104,7 +104,7 @@ RUN \
       requests==2.19.1 \
       ujson==1.35 \
       docker==3.7.0 \
-      pyzmq==18.0.2 \
+      pyzmq==19.0.0 \
       matplotlib==2.2.2 \
       scipy==1.3.0 \
       numpy==1.16.4 \
