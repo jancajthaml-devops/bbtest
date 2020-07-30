@@ -35,6 +35,7 @@ RUN \
     apt-utils \
     dpkg-dev \
     netcat-openbsd \
+    faketime \
     build-essential \
     rsyslog \
     multiarch-support \
