@@ -39,6 +39,7 @@ RUN \
     build-essential \
     rsyslog \
     multiarch-support \
+    libsystemd-dev \
     libzmq5>=4.3.1~ \
     libzmq3-dev>=4.3.1~ \
     openjdk-11-jre \
@@ -77,6 +78,7 @@ RUN \
       pynng==0.4.0 \
       behave2cucumber==1.0.3 \
       cucumber-json-to-junit-xml==0.0.10 \
+      systemd==0.16.1 \
     && \
     :
 
