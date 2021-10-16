@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020, Jan Cajthaml <jan.cajthaml@gmail.com>
+# Copyright (c) 2017-2021, Jan Cajthaml <jan.cajthaml@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM amd64/debian:buster
+FROM amd64/debian:sid-slim
 
 LABEL com.circleci.preserve-entrypoint=true
 
@@ -38,16 +38,18 @@ RUN \
     faketime \
     build-essential \
     rsyslog \
-    multiarch-support \
-    libsystemd-dev \
+    libpq-dev \
+    libfreetype-dev \
+    pkg-config \
     libzmq5>=4.3.1~ \
     libzmq3-dev>=4.3.1~ \
-    openjdk-11-jre \
+    openjdk-16-jre \
     python3 \
     python3-dev \
     python3-wheel \
     python3-pip \
     python3-setuptools \
+    python3-systemd \
     systemd \
     systemd-sysv \
     dbus \
@@ -69,16 +71,16 @@ RUN \
       behave==1.2.6 \
       psycopg2-binary==2.8.3 \
       requests==2.19.1 \
-      ujson==1.35 \
       docker==3.7.0 \
       pyzmq==19.0.0 \
-      matplotlib==2.2.2 \
-      scipy==1.3.0 \
-      numpy==1.16.4 \
-      pynng==0.4.0 \
+      matplotlib \
+      ujson \
+      scipy \
+      numpy \
+      pynng \
+      pyjks \
       behave2cucumber==1.0.3 \
       cucumber-json-to-junit-xml==0.0.10 \
-      systemd==0.16.1 \
     && \
     :
 
@@ -96,11 +98,6 @@ RUN systemctl mask -- \
       systemd-resolved.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
-    :
-
-RUN rm -f \
-      /etc/machine-id \
-      /var/lib/dbus/machine-id && \
     :
 
 COPY --from=amd64/docker:18 /usr/local/bin/docker /usr/bin/docker

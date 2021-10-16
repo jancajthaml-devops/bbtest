@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020, Jan Cajthaml <jan.cajthaml@gmail.com>
+# Copyright (c) 2017-2021, Jan Cajthaml <jan.cajthaml@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM arm32v7/debian:buster-slim
+FROM arm32v7/debian:sid-slim
 
 LABEL com.circleci.preserve-entrypoint=true
 
 ENV LANG C.UTF-8
-ENV JAVA_HOME /usr/local/openjdk-11
+ENV JAVA_HOME /usr/local/openjdk-16
 ENV container docker
 ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
