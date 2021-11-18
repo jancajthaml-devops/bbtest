@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM amd64/debian:sid-slim
+FROM --platform=linux/amd64 amd64/debian:sid-slim
 
 LABEL com.circleci.preserve-entrypoint=true
 
@@ -25,8 +25,9 @@ ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE no
 RUN \
   apt-get update -y && \
   \
-  apt-get install -y --no-install-recommends \
+  apt-get -y install --no-install-recommends \
     ca-certificates \
+    cmake \
     curl \
     git \
     tar \
@@ -41,9 +42,9 @@ RUN \
     libpq-dev \
     libfreetype-dev \
     pkg-config \
-    libzmq5>=4.3.1~ \
-    libzmq3-dev>=4.3.1~ \
-    openjdk-16-jre \
+    libzmq5>=4.3~ \
+    libzmq3-dev>=4.3~ \
+    openjdk-17-jre \
     python3 \
     python3-dev \
     python3-wheel \
@@ -107,6 +108,8 @@ STOPSIGNAL SIGRTMIN+3
 VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock" ]
 
 ADD entrypoint.sh /
+
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 
