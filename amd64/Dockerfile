@@ -69,18 +69,19 @@ RUN \
 RUN \
     pip3 install \
     \
-      behave==1.2.6 \
-      psycopg2-binary==2.8.3 \
+      psycopg2-binary==2.9.2 \
       requests==2.19.1 \
-      docker==3.7.0 \
-      pyzmq==19.0.0 \
+      docker==5.0.3 \
+      pyzmq==22.3.0 \
       matplotlib \
       ujson \
       scipy \
       numpy \
       pynng \
       pyjks \
+      behave==1.2.6 \
       behave2cucumber==1.0.3 \
+      behave-plain-color-formatter==0.0.2 \
       cucumber-json-to-junit-xml==0.0.10 \
     && \
     :
