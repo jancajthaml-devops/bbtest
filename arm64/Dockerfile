@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2021, Jan Cajthaml <jan.cajthaml@gmail.com>
+# Copyright (c) 2017-2022, Jan Cajthaml <jan.cajthaml@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ ENV container docker
 ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE no
+ENV UNIFIED_CGROUP_HIERARCHY yes
 
 RUN \
   apt-get update -y && \
@@ -28,16 +29,12 @@ RUN \
   apt-get -y install --no-install-recommends \
     ca-certificates \
     cmake \
-    curl \
-    git \
     tar \
-    cron \
     bzip2 \
-    apt-utils \
     dpkg-dev \
-    netcat-openbsd \
     faketime \
     build-essential \
+    netcat-openbsd \
     rsyslog \
     libpq-dev \
     libfreetype-dev \
@@ -70,8 +67,7 @@ RUN \
     pip3 install \
     \
       psycopg2-binary==2.9.2 \
-      requests==2.19.1 \
-      docker==5.0.3 \
+      openbank-testkit==0.16 \
       pyzmq==22.3.0 \
       matplotlib \
       ujson \
@@ -114,4 +110,4 @@ RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 
-CMD [ "/sbin/init" ]
+CMD [ "/lib/systemd/systemd", "log-level=info", "unit=sysinit.target" ]
