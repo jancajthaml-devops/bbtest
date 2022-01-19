@@ -67,7 +67,7 @@ RUN \
     pip3 install \
     \
       psycopg2-binary==2.9.2 \
-      openbank-testkit==0.46 \
+      openbank-testkit==0.47 \
       pyzmq==22.3.0 \
       matplotlib \
       ujson \
@@ -88,17 +88,12 @@ RUN \
     printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 
 RUN systemctl mask -- \
-      dev-hugepages.mount \
-      sys-fs-fuse-connections.mount \
-      systemd-tmpfiles-setup-dev.service \
       systemd-firstboot.service \
       systemd-udevd.service \
       systemd-resolved.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
     :
-
-COPY --from=amd64/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 STOPSIGNAL SIGRTMIN+3
 
