@@ -68,7 +68,7 @@ RUN \
     pip3 install \
     \
       psycopg2-binary==2.9.2 \
-      openbank-testkit==0.50 \
+      openbank-testkit==0.52 \
       pyzmq==22.3.0 \
       matplotlib \
       ujson \
