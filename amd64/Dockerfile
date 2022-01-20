@@ -22,7 +22,6 @@ ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE no
 ENV UNIFIED_CGROUP_HIERARCHY yes
-ENV PYTHONUNBUFFERED yes
 
 RUN \
   apt-get update -y && \
@@ -68,7 +67,7 @@ RUN \
     pip3 install \
     \
       psycopg2-binary==2.9.2 \
-      openbank-testkit==0.52 \
+      openbank-testkit==0.56 \
       pyzmq==22.3.0 \
       matplotlib \
       ujson \
