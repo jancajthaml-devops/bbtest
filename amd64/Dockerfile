@@ -88,12 +88,15 @@ RUN \
     printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 
 RUN systemctl mask -- \
+      dev-hugepages.mount \
       systemd-firstboot.service \
       systemd-udevd.service \
       systemd-resolved.service \
       systemd-ask-password-wall.path \
       systemd-logind.service && \
     :
+
+COPY --from=amd64/docker:18 /usr/local/bin/docker /usr/bin/docker
 
 STOPSIGNAL SIGRTMIN+3
 
