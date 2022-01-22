@@ -86,6 +86,8 @@ RUN \
 
 RUN \
     sed -i '/imklog/{s/^/#/}' /etc/rsyslog.conf && \
+    sed -i 's/peer/trust/g' /etc/postgresql/14/main/pg_hba.conf && \
+    sed -i 's/scram-sha-256/trust/g' /etc/postgresql/14/main/pg_hba.conf && \
     sed -ri /etc/systemd/journald.conf -e 's!^#?Storage=.*!Storage=volatile!' && \
     printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 
