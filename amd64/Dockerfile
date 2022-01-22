@@ -52,6 +52,8 @@ RUN \
     systemd-sysv \
     dbus \
     dbus-user-session \
+    postgresql \
+    postgresql-contrib \
   && \
   apt-get clean -y \
   && \
